@@ -1,7 +1,9 @@
 export default class Numbers {
 
   // Class defaults
-  constructor () {
+  constructor (history = []) {
+
+    // Number generation variables
     this.limit = 69;
     this.break = Math.ceil(this.limit / 2);
     this.odd = [];
@@ -21,6 +23,12 @@ export default class Numbers {
         this.high.push(i);
       }
     }
+
+    // Historical data
+    this.lastDrawing = history[0];
+    this.hot = [];
+    this.cold = [];
+    
   }
 
   // Random number generators

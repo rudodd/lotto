@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 export default function handler(req, res) {
-  fetch('https://data.ny.gov/api/views/d6yy-54nr/rows.json')
+  return fetch('https://data.ny.gov/api/views/d6yy-54nr/rows.json')
     .then((response) => {
       if (response.ok) {
         response.json()

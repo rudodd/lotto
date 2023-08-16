@@ -11,17 +11,17 @@ import Image from 'next/image'
 
 export default function Home() {
 
-  const numbers = new Numbers();
+  let numbers;
+  const [prevResults, setPrevResults] = useState([]);
+  const [lastDrawing, setLastDrawing] = useState(null);
   const [oddHigh, setOddHigh] = useState([]);
   const [evenHigh, setEvenHigh] = useState([]);
   const [oddLow, setOddLow] = useState([]);
   const [evenLow, setEvenLow] = useState([]);
-  const [prevResults, setPrevResults] = useState([]);
 
   const fetchLottResults = () => {
     fetch('/api/lotto-results')
       .then((res) => {
-        console.log(res);
         res.json()
           .then((json) => {
             const last100 = json.data.map((draw) => {
@@ -37,78 +37,101 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (numbers) {
+    if (!empty(prevResults)) {
+      numbers = new Numbers(prevResults);
+      setLastDrawing(numbers.lastDrawing);
       setOddHigh(numbers.generatePlay(3,2,3,2));
       setOddLow(numbers.generatePlay(3,2,2,3));
       setEvenHigh(numbers.generatePlay(2,3,3,2));
       setEvenLow(numbers.generatePlay(2,3,2,3));
     }
+  }, [prevResults])
+
+  useEffect(() => {
     fetchLottResults();
   }, [])
 
   return (
-    <div>
-      <Head>
-        <title>Combinatorial Lotto Numbers</title>
-        <meta name="description" content="Powerball combinatorial number generator" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      {!empty(prevResults) &&
+        <div>
+          <Head>
+            <title>Combinatorial Lotto Numbers</title>
+            <meta name="description" content="Powerball combinatorial number generator" />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
-      <main>
-        <h1>Combinatorial Lotto Numbers</h1>
-        {!empty(oddHigh) &&
-          <div className="play-container">
-            <h2>Odd / High Dominant</h2>
-            <div className="number-container">
-              {oddHigh.map((number, key) => (
-                <div className="number" key={`odd-high-${number}-${key}`}>
-                  {number}
+          <main>
+            <h1>Combinatorial Lotto Numbers</h1>
+            {!empty(lastDrawing) &&
+              <div className="last-drawing">
+                <div className="play-container">
+                  <h2>Last Drawing</h2>
+                  <div className="number-container">
+                    {lastDrawing.numbers.map((number, key) => (
+                      <div className="number" key={`odd-high-${number}-${key}`}>
+                        {number}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        }
-        {!empty(oddLow) &&
-          <div className="play-container">
-            <h2>Odd / Low Dominant</h2>
-            <div className="number-container">
-              {oddLow.map((number, key) => (
-                <div className="number" key={`odd-high-${number}-${key}`}>
-                  {number}
+              </div>
+            }
+            {!empty(oddHigh) &&
+              <div className="play-container">
+                <h2>Odd / High Dominant</h2>
+                <div className="number-container">
+                  {oddHigh.map((number, key) => (
+                    <div className="number" key={`odd-high-${number}-${key}`}>
+                      {number}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        }
-        {!empty(evenHigh) &&
-          <div className="play-container">
-            <h2>Even / High Dominant</h2>
-            <div className="number-container">
-              {evenHigh.map((number, key) => (
-                <div className="number" key={`odd-high-${number}-${key}`}>
-                  {number}
+              </div>
+            }
+            {!empty(oddLow) &&
+              <div className="play-container">
+                <h2>Odd / Low Dominant</h2>
+                <div className="number-container">
+                  {oddLow.map((number, key) => (
+                    <div className="number" key={`odd-high-${number}-${key}`}>
+                      {number}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        }
-        {!empty(evenLow) &&
-          <div className="play-container">
-            <h2>Even / Low Dominant</h2>
-            <div className="number-container">
-              {evenLow.map((number, key) => (
-                <div className="number" key={`odd-high-${number}-${key}`}>
-                  {number}
+              </div>
+            }
+            {!empty(evenHigh) &&
+              <div className="play-container">
+                <h2>Even / High Dominant</h2>
+                <div className="number-container">
+                  {evenHigh.map((number, key) => (
+                    <div className="number" key={`odd-high-${number}-${key}`}>
+                      {number}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        }
-      </main>
+              </div>
+            }
+            {!empty(evenLow) &&
+              <div className="play-container">
+                <h2>Even / Low Dominant</h2>
+                <div className="number-container">
+                  {evenLow.map((number, key) => (
+                    <div className="number" key={`odd-high-${number}-${key}`}>
+                      {number}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          </main>
 
-      <footer>
+          <footer>
 
-      </footer>
-    </div>
+          </footer>
+        </div>
+      }
+    </>
   )
 }
