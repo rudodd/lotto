@@ -12,10 +12,29 @@ import Image from 'next/image'
 export default function Home() {
 
   const numbers = new Numbers();
-  const [oddHigh, setOddHigh] = useState(null);
-  const [evenHigh, setEvenHigh] = useState(null);
-  const [oddLow, setOddLow] = useState(null);
-  const [evenLow, setEvenLow] = useState(null);
+  const [oddHigh, setOddHigh] = useState([]);
+  const [evenHigh, setEvenHigh] = useState([]);
+  const [oddLow, setOddLow] = useState([]);
+  const [evenLow, setEvenLow] = useState([]);
+  const [prevResults, setPrevResults] = useState([]);
+
+  const fetchLottResults = () => {
+    fetch('/api/lotto-results')
+      .then((res) => {
+        console.log(res);
+        res.json()
+          .then((json) => {
+            const last100 = json.data.map((draw) => {
+              return {
+                date: new Date(draw[8]),
+                numbers: draw[9].split(' ').map((number) => Number(number))
+              }
+            }).sort((a,b) => b.date - a.date);
+            last100.length = 100;
+            setPrevResults(last100);
+          });
+      })
+  }
 
   useEffect(() => {
     if (numbers) {
@@ -24,6 +43,7 @@ export default function Home() {
       setEvenHigh(numbers.generatePlay(2,3,3,2));
       setEvenLow(numbers.generatePlay(2,3,2,3));
     }
+    fetchLottResults();
   }, [])
 
   return (
