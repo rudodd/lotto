@@ -14,24 +14,24 @@ export default function Home() {
   let numbers;
   const [prevResults, setPrevResults] = useState([]);
   const [lastDrawing, setLastDrawing] = useState(null);
-  const [oddHigh, setOddHigh] = useState([]);
-  const [evenHigh, setEvenHigh] = useState([]);
-  const [oddLow, setOddLow] = useState([]);
-  const [evenLow, setEvenLow] = useState([]);
+  const [odd, setOdd] = useState([]);
+  const [even, setEven] = useState([]);
+  const [high, setHigh] = useState([]);
+  const [low, setLow] = useState([]);
 
   const fetchLottResults = () => {
     fetch('/api/lotto-results')
       .then((res) => {
         res.json()
           .then((json) => {
-            const last100 = json.data.map((draw) => {
+            const last = json.data.map((draw) => {
               return {
                 date: new Date(draw[8]),
                 numbers: draw[9].split(' ').map((number) => Number(number))
               }
             }).sort((a,b) => b.date - a.date);
-            last100.length = 100;
-            setPrevResults(last100);
+            last.length = 100;
+            setPrevResults(last);
           });
       })
   }
@@ -40,10 +40,11 @@ export default function Home() {
     if (!empty(prevResults)) {
       numbers = new Numbers(prevResults);
       setLastDrawing(numbers.lastDrawing);
-      setOddHigh(numbers.generatePlay(3,2,3,2));
-      setOddLow(numbers.generatePlay(3,2,2,3));
-      setEvenHigh(numbers.generatePlay(2,3,3,2));
-      setEvenLow(numbers.generatePlay(2,3,2,3));
+      setOdd(numbers.generatePlay('odd'));
+      setEven(numbers.generatePlay('even'));
+      setHigh(numbers.generatePlay('high'));
+      setLow(numbers.generatePlay('low'));
+      console.log(numbers.getStats());
     }
   }, [prevResults])
 
@@ -77,11 +78,11 @@ export default function Home() {
                 </div>
               </div>
             }
-            {!empty(oddHigh) &&
+            {!empty(odd) &&
               <div className="play-container">
-                <h2>Odd / High Dominant</h2>
+                <h2>Odd Dominant</h2>
                 <div className="number-container">
-                  {oddHigh.map((number, key) => (
+                  {odd.map((number, key) => (
                     <div className="number" key={`odd-high-${number}-${key}`}>
                       {number}
                     </div>
@@ -89,11 +90,11 @@ export default function Home() {
                 </div>
               </div>
             }
-            {!empty(oddLow) &&
+            {!empty(even) &&
               <div className="play-container">
-                <h2>Odd / Low Dominant</h2>
+                <h2>Even Dominant</h2>
                 <div className="number-container">
-                  {oddLow.map((number, key) => (
+                  {even.map((number, key) => (
                     <div className="number" key={`odd-high-${number}-${key}`}>
                       {number}
                     </div>
@@ -101,11 +102,11 @@ export default function Home() {
                 </div>
               </div>
             }
-            {!empty(evenHigh) &&
+            {!empty(high) &&
               <div className="play-container">
-                <h2>Even / High Dominant</h2>
+                <h2>High Dominant</h2>
                 <div className="number-container">
-                  {evenHigh.map((number, key) => (
+                  {high.map((number, key) => (
                     <div className="number" key={`odd-high-${number}-${key}`}>
                       {number}
                     </div>
@@ -113,11 +114,11 @@ export default function Home() {
                 </div>
               </div>
             }
-            {!empty(evenLow) &&
+            {!empty(low) &&
               <div className="play-container">
-                <h2>Even / Low Dominant</h2>
+                <h2>Low Dominant</h2>
                 <div className="number-container">
-                  {evenLow.map((number, key) => (
+                  {low.map((number, key) => (
                     <div className="number" key={`odd-high-${number}-${key}`}>
                       {number}
                     </div>

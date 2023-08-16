@@ -25,10 +25,8 @@ export default class Numbers {
     }
 
     // Historical data
+    this.history = history;
     this.lastDrawing = history[0];
-    this.hot = [];
-    this.cold = [];
-    
   }
 
   // Random number generators
@@ -41,33 +39,29 @@ export default class Numbers {
   isHigh(x) { return this.high.includes(x) };
   isLow(x) { return this.low.includes(x) };
 
-  generateNumbers = (o,e,h,l) => {
+  // Number generator loop
+  generateNumbers = (type) => {
     const numbers = [];
-    let totalOdd = 0;
-    let totalEven = 0;
-    let totalHigh = 0;
-    let totalLow = 0;
-    for (let i = 0; numbers.length < 5 && i < 100000; i++) {
-      let num = this.random();
-      if (!numbers.includes(num)) {
-        if (totalOdd < o && this.isOdd(num)) {
-          if (totalHigh < h && this.isHigh(num)) {
+    if (type === null) {
+      for (let i = 0; numbers.length < 5 && i < 100000; i++) {
+        let num = this.random();
+        if (!numbers.includes(num)) {
+          numbers.push(num);
+        }
+      }
+    } else {
+      let dominant = 0;
+      let others = 0;
+      for (let i = 0; numbers.length < 5 && i < 100000; i++) {
+        let num = this.random();
+        if (!numbers.includes(num)) {
+          if (dominant < 3 && (type === 'odd' ? this.isOdd(num) : type === 'even' ? this.isEven(num) : type === 'high' ? this.isHigh(num) : this.isLow(num))) {
             numbers.push(num);
-            totalHigh++;
-          } else if (totalLow < l && this.isLow(num)) {
-            numbers.push(num);
-            totalLow++;
+            dominant++;
+          } else if (others < 2) {
+            numbers.push(num)
+            others++;
           }
-          totalOdd++;
-        } else if (totalEven < e && this.isEven(num)) {
-          if (totalHigh < h && this.isHigh(num)) {
-            numbers.push(num);
-            totalHigh++;
-          } else if (totalLow < l && this.isLow(num)) {
-            numbers.push(num);
-            totalLow++;
-          }
-          totalEven++;
         }
       }
     }
@@ -75,21 +69,58 @@ export default class Numbers {
   }
 
   // Main play generator
-  generatePlay(numOdd, numEven, numHigh, numLow) {
-    if ((numOdd + numEven) === 5 && (numHigh + numLow) === 5) {
-      let play = [];
-      for (let i = 0; play.length === 0 && i < 1000; i++) {
-        const playAttempt = this.generateNumbers(numOdd, numEven, numHigh, numLow);
-        if (playAttempt.length === 5) {
-          play = playAttempt;
-        }
-        i++;
+  generatePlay(type = null) {
+    let play = [];
+    for (let i = 0; play.length === 0 && i < 1000; i++) {
+      const playAttempt = this.generateNumbers(type);
+      const sum = playAttempt.reduce((a, b) => a + b);
+      if (playAttempt.length === 5 && (sum >= 130 && sum <= 221)) {
+        play = playAttempt;
       }
-      play.sort((a,b) => a - b);
-      play.push(this.powerBall());
-      return play;
-    } else {
-      throw 'The generate play method accepts only a combination 5 odd/even and 5 high/low';
+      i++;
     }
+    play.sort((a,b) => a - b);
+    play.push(this.powerBall());
+    return play;
+  }
+
+  // Statistical analysis
+  getStats() {
+    const data = [...this.history];
+    for (let i = 0; i < data.length; i++) {
+      const numbers = [...data[i].numbers];
+      numbers.pop();
+      const sum = numbers.reduce((a, b) => a + b);
+      let oddCount = 0;
+      let highCount = 0;
+      for (let j = 0; j < (numbers.length) ; j++) {
+        if (this.isOdd(numbers[j])) { oddCount++ }
+        if (this.isHigh(numbers[j])) { highCount++ }
+      }
+      data[i].stats = {
+        isOddDom: oddCount === 3,
+        isEvenDom: oddCount === 2,
+        isHighDom: highCount === 3,
+        isLowDom: highCount === 2,
+        sumRange: (sum >= 130 && sum <= 221),
+      }
+    }
+    const oddTotal = data.filter((draw) => draw.stats.isOddDom).length;
+    const evenTotal = data.filter((draw) => draw.stats.isEvenDom).length;
+    const highTotal = data.filter((draw) => draw.stats.isHighDom).length;
+    const lowTotal = data.filter((draw) => draw.stats.isLowDom).length;
+    const sumRange = data.filter((draw) => draw.stats.sumRange).length;
+
+    return {
+      all: {
+        odd: oddTotal,
+        even: evenTotal,
+        high: highTotal,
+        low: lowTotal,
+        total: oddTotal + evenTotal + highTotal + lowTotal,
+        sumRange: sumRange
+      },
+      data: data
+    };
   }
 }
