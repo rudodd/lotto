@@ -1,3 +1,6 @@
+// import custom functionality
+import { empty } from './helpers';
+
 export default class Numbers {
 
   // Class defaults
@@ -27,6 +30,21 @@ export default class Numbers {
     // Historical data
     this.history = history;
     this.lastDrawing = history[0];
+    this.count = {}
+    for (let i = 0; i < history.length; i++) {
+      const numbers = [...history[i].numbers];
+      numbers.pop();
+      for (let j = 0; j < numbers.length; j++) {
+        const existsInCount = !empty(this.count[numbers[j]]);
+        if (existsInCount) {
+          this.count[numbers[j]].count = this.count[numbers[j]].count + 1;
+        } else {
+          this.count[numbers[j]] = {count: 1};
+        }
+      }
+    }
+    this.hot = Object.entries(this.count).map((number) => { return {number: Number(number[0]), count: number[1].count}}).sort((a,b) => b.count - a.count).slice(0, 5);
+    this.cold = Object.entries(this.count).map((number) => { return {number: Number(number[0]), count: number[1].count}}).sort((a,b) => a.count - b.count).slice(0, 5);
   }
 
   // Random number generators
@@ -110,6 +128,7 @@ export default class Numbers {
     const highTotal = data.filter((draw) => draw.stats.isHighDom).length;
     const lowTotal = data.filter((draw) => draw.stats.isLowDom).length;
     const sumRange = data.filter((draw) => draw.stats.sumRange).length;
+    const total = data.filter((draw) => (draw.stats.isOddDom || draw.stats.isEvenDom || draw.stats.isHighDom || draw.stats.isLowDom)).length;
 
     return {
       all: {
@@ -117,8 +136,10 @@ export default class Numbers {
         even: evenTotal,
         high: highTotal,
         low: lowTotal,
-        total: oddTotal + evenTotal + highTotal + lowTotal,
-        sumRange: sumRange
+        total: total,
+        sumRange: sumRange,
+        hot: this.hot,
+        cold: this.cold
       },
       data: data
     };

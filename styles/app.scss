@@ -22,6 +22,14 @@ main {
         border: solid 1px black;
         border-radius: 50%;
 
+        &.hot {
+          background: lightpink;
+        }
+
+        &.cold {
+          background: lightblue;
+        }
+
         &:last-of-type {
           background: red;
           color: white;
