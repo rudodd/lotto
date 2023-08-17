@@ -1,0 +1,38 @@
+
+html,
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #363636;
+  color: white;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem 0;
+    max-width: 375px;
+    margin: auto;
+
+    .my-numbers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem 0;
+
+      .generate-plays-button {
+        margin-top: 1rem;
+      }
+    }
+  }
+}
+
+@import './components/number-card.scss'

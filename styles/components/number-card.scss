@@ -1,0 +1,107 @@
+/**
+ *  Styles for the NumberCard component *************************************
+ **/
+
+.play-card {
+
+  .play-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-bottom: 16px !important;
+    background: #f5f5f5;
+
+    p {
+      margin-left: auto;
+      font-size: 0.8rem;
+    }
+
+    &.last-drawing {
+      background: white;
+      
+      .number-container {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: solid 1px #f5f5f5;
+      }
+    }
+
+    .number-container {
+      display: flex;
+      gap: 0 0.75rem;
+      width: 100%;
+      font-weight: 500;
+
+      .number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        height: 2em;
+        width: 2rem;
+        border: solid 1px #d7d7d7;
+        border-radius: 50%;
+        background: white;
+        background: radial-gradient(circle, rgba(255,255,255,1) 33%, rgba(0,0,0,0.15) 100%);
+
+        &.hot {
+          border: solid 1px rgba(200,17,17,0.7);
+        }
+
+        &.cold {
+          border: solid 1px rgba(0,157,255,0.8);
+        }
+
+        &.powerball {
+          background: rgb(200,17,17);
+          background: radial-gradient(circle, rgba(200,17,17,0.7) 33%, rgba(200,17,17,1) 100%);
+          color: white;
+          border: solid 1px darkred;
+        }
+      }
+
+      .card-actions {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .card-expand-button {
+
+    svg.flipped {
+      transform: rotate(180deg)!important;
+    }
+  }
+
+  .pattern-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 1rem;
+
+    .pattern {
+      display: flex;
+      font-size: 0.8rem;
+      align-items: center;
+      gap: 0 0.25rem;
+      line-height: 0.75rem;
+
+      .checked {
+        fill: green;
+      }
+
+      .unchecked {
+        fill: #d7d7d7;
+      }
+    }
+  }
+
+  .play-info {
+    margin-top: 0.5rem;
+
+    p {
+      font-size: small;
+    }
+  }
+}
