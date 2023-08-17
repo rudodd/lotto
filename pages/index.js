@@ -15,12 +15,23 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [prevResults, setPrevResults] = useState([]);
   const [lastDrawing, setLastDrawing] = useState(null);
+  const [nextDrawing, setNextDrawing] = useState(null);
   const [odd, setOdd] = useState([]);
   const [even, setEven] = useState([]);
   const [high, setHigh] = useState([]);
   const [low, setLow] = useState([]);
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
+
+  const getNextDrawing = () => {
+    const today = new Date().getDay();
+    const drawingDays = [1, 3, 6];
+    const oneDay = [0, 2, 5];
+    const daysBetween = drawingDays.includes(today) ? 0 : oneDay.includes(today) ? 1 : 2;
+    const nextDrawing = new Date();
+    nextDrawing.setDate(nextDrawing.getDate() + daysBetween)
+    setNextDrawing(nextDrawing.toDateString());
+  }
 
   const fetchLottResults = () => {
     fetch('/api/lotto-results')
@@ -35,6 +46,7 @@ export default function Home() {
             }).sort((a,b) => b.date - a.date);
             last.length = 100;
             setPrevResults(last);
+
           });
       })
   }
@@ -54,13 +66,10 @@ export default function Home() {
   }, [prevResults])
 
   useEffect(() => {
-    fetchLottResults();
-  }, [])
-
-  useEffect(() => {
     if (
       !empty(prevResults) &&
       !empty(lastDrawing) &&
+      !empty(nextDrawing) &&
       !empty(odd) &&
       !empty(even) &&
       !empty(high) &&
@@ -70,7 +79,28 @@ export default function Home() {
     ) {
       setLoading(false);
     }
-  }, [prevResults, lastDrawing, odd, even, high, low, hot, cold])
+
+    if (    
+      !empty(odd) &&
+      !empty(even) &&
+      !empty(high) &&
+      !empty(low)
+    ) {
+      window.localStorage.setItem('numbers', JSON.stringify({
+        date: new Date(),
+        odd: odd,
+        even: even,
+        high: high,
+        low: low
+      }))
+    }
+    console.log(nextDrawing);
+  }, [prevResults, nextDrawing, lastDrawing, odd, even, high, low, hot, cold])
+
+  useEffect(() => {
+    fetchLottResults();
+    getNextDrawing();
+  }, [])
 
   return (
     <>
@@ -84,6 +114,7 @@ export default function Home() {
 
           <main>
             <h1>Combinatorial Lotto Numbers</h1>
+            <p>Next drawing: {nextDrawing}</p>
             {!empty(lastDrawing) &&
               <div className="last-drawing">
                 <div className="play-container">
