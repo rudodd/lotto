@@ -3,25 +3,23 @@ import React, { useEffect, useState } from 'react';
 
 // import custom functionality
 import Numbers from '../utils/numbers';
-import { empty } from '../utils/helpers';
+import { empty, titleCase } from '../utils/helpers';
 
 // import components
 import Head from 'next/head'
+import Button from '@mui/material/Button';
 import NumberCard from '../components/NumerCard';
 
 export default function Home() {
 
-  let numbers;
   const [loading, setLoading] = useState(true);
+  const [numbers, setNumbers] = useState(null);
   const [jackpot, setJackpot] = useState(null);
   const [cashValue, setCashValue] = useState(null);
   const [prevResults, setPrevResults] = useState([]);
   const [lastDrawing, setLastDrawing] = useState(null);
   const [nextDrawing, setNextDrawing] = useState(null);
-  const [odd, setOdd] = useState([]);
-  const [even, setEven] = useState([]);
-  const [high, setHigh] = useState([]);
-  const [low, setLow] = useState([]);
+  const [plays, setPlays] = useState([]);
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
 
@@ -64,17 +62,26 @@ export default function Home() {
       })
   }
 
+  const generatePlays = () => {
+    const generatedPlays = [];
+    ['odd', 'even', 'high', 'low'].forEach((type) => {
+      generatedPlays.push({
+        numbers: numbers.generatePlay(type),
+        type: titleCase(type) + ' Dominant 3:2 Ratio'
+      })
+    })
+    window.localStorage.setItem('power-picker-plays', JSON.stringify(generatedPlays))
+    setPlays(generatedPlays);
+  }
+
   useEffect(() => {
     if (!empty(prevResults)) {
-      numbers = new Numbers(prevResults);
+      const numbers = new Numbers(prevResults);
       const stats = numbers.getStats();
-      setLastDrawing({...numbers.lastDrawing, ...stats[0]});
-      setOdd(numbers.generatePlay('odd'));
-      setEven(numbers.generatePlay('even'));
-      setHigh(numbers.generatePlay('high'));
-      setLow(numbers.generatePlay('low'));
+      setLastDrawing({...numbers.lastDrawing, ...stats.data[0]});
       setHot(numbers.hot.map((number) => number.number));
       setCold(numbers.cold.map((number) => number.number));
+      setNumbers(numbers);
     }
   }, [prevResults])
 
@@ -83,33 +90,18 @@ export default function Home() {
       !empty(prevResults) &&
       !empty(lastDrawing) &&
       !empty(nextDrawing) &&
-      !empty(odd) &&
-      !empty(even) &&
-      !empty(high) &&
-      !empty(low) &&
       !empty(hot) &&
       !empty(cold)
     ) {
       setLoading(false);
     }
-
-    if (    
-      !empty(odd) &&
-      !empty(even) &&
-      !empty(high) &&
-      !empty(low)
-    ) {
-      window.localStorage.setItem('numbers', JSON.stringify({
-        date: new Date(),
-        odd: odd,
-        even: even,
-        high: high,
-        low: low
-      }))
-    }
-  }, [prevResults, nextDrawing, lastDrawing, odd, even, high, low, hot, cold])
+  }, [prevResults, nextDrawing, lastDrawing, hot, cold])
 
   useEffect(() => {
+    const savedPlays = JSON.parse(window.localStorage.getItem('power-picker-plays'));
+    if (!empty(savedPlays)) {
+      setPlays(savedPlays);
+    }
     fetchLottResults();
     getNextDrawing();
   }, [])
@@ -135,22 +127,20 @@ export default function Home() {
               <h3><span>Est. Cash Value:</span> {cashValue}</h3>
             </div>
             {!empty(lastDrawing) &&
-              <NumberCard numbers={lastDrawing.numbers} hot={hot} cold={cold} lastDrawing={lastDrawing} />
+              <NumberCard play={lastDrawing} hot={hot} cold={cold} lastDrawing />
             }
             <div className="my-numbers">
               <h3>My Numbers</h3>
-              {!empty(odd) &&
-                <NumberCard numbers={odd} hot={hot} cold={cold} />
-              }
-              {!empty(even) &&
-                <NumberCard numbers={even} hot={hot} cold={cold} />
-              }
-              {!empty(high) &&
-                <NumberCard numbers={high} hot={hot} cold={cold} />
-              }
-              {!empty(low) &&
-                <NumberCard numbers={low} hot={hot} cold={cold} />
-              }
+              {!empty(plays) ? (
+                <>
+                  {plays.map((play, key) => (
+                    <NumberCard play={play} hot={hot} cold={cold} key={`generated-play-${key}`} />
+                  ))}
+                  <Button className="generate-plays-button" variant="contained" onClick={() => generatePlays()}>Generate New Plays</Button>
+                </>
+              ) : (
+                <Button className="generate-plays-button" variant="contained" onClick={() => generatePlays()}>Generate Plays</Button>
+              )}
             </div>
           </main>
 

@@ -29,3 +29,7 @@ export const empty = (variable) => {
     return false;
   }
 }
+// Helper function to convert a string to title case
+export const titleCase = (string) => {
+  return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+}

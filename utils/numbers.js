@@ -9,23 +9,6 @@ export default class Numbers {
     // Number generation variables
     this.limit = 69;
     this.break = Math.ceil(this.limit / 2);
-    this.odd = [];
-    this.even = [];
-    this.high = [];
-    this.low = [];
-    for (let i = 1; i <= this.limit; i++) {
-      if (i%2 > 0) {
-        this.odd.push(i);
-      } else {
-        this.even.push(i);
-      }
-
-      if (i <= this.break) {
-        this.low.push(i)
-      } else {
-        this.high.push(i);
-      }
-    }
 
     // Historical data
     this.history = history;
@@ -52,10 +35,10 @@ export default class Numbers {
   powerBall() { return Math.floor(Math.random() * (26 - 1) + 1)  };
 
   // Number checkers
-  isOdd(x) { return this.odd.includes(x) };
-  isEven(x) { return this.even.includes(x) };
-  isHigh(x) { return this.high.includes(x) };
-  isLow(x) { return this.low.includes(x) };
+  isOdd(x) { return x % 2 !== 0 };
+  isEven(x) { return x % 2 === 0 };
+  isHigh(x) { return x > 35};
+  isLow(x) { return x <= 35 };
 
   // Number generator loop
   generateNumbers = (type) => {
@@ -71,12 +54,13 @@ export default class Numbers {
       let dominant = 0;
       let others = 0;
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
+        console.log(dominant);
         let num = this.random();
         if (!numbers.includes(num)) {
-          if (dominant < 3 && (type === 'odd' ? this.isOdd(num) : type === 'even' ? this.isEven(num) : type === 'high' ? this.isHigh(num) : this.isLow(num))) {
+          if (dominant < 3 && ((type === 'odd' && this.isOdd(num)) || (type === 'even' && this.isEven(num)) || (type === 'high' && this.isHigh(num)) || (type == 'low' && this.isLow(num)))) {
             numbers.push(num);
             dominant++;
-          } else if (others < 2) {
+          } else if (others < 2 && ((type === 'odd' && !this.isOdd(num)) || (type === 'even' && !this.isEven(num)) || (type === 'high' && !this.isHigh(num)) || (type == 'low' && !this.isLow(num)))) {
             numbers.push(num)
             others++;
           }

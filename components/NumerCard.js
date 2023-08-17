@@ -1,8 +1,5 @@
 // Import library functionality
-import React, {useState, useEffect} from 'react';
-
-// Import custom functionality
-import { empty } from '../utils/helpers';
+import React, {useState } from 'react';
 
 // import components
 import Card from '@mui/material/Card';
@@ -17,22 +14,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function NumberCard(props) {
 
-  const { numbers, hot, cold, lastDrawing } = props;
+  const { play, hot, cold, lastDrawing } = props;
   const [expanded, setExpanded] = useState(false);
-  console.log(lastDrawing);
 
   return (
     <Card className="play-card">
-      <CardContent className={`play-container${!empty(lastDrawing) ? ' last-drawing' : ''}`}>
-        {!empty(lastDrawing) &&
+      <CardContent className={`play-container${lastDrawing ? ' last-drawing' : ''}`}>
+        {lastDrawing &&
           <>
             <h3>Last Drawing</h3>
-            <p>{lastDrawing.date.toDateString()}</p>
+            <p>{play.date.toDateString()}</p>
           </>
         }
         <div className="number-container">
-          {numbers.map((number, index) => (
-            <div className={`number${index === 5 ? ' powerball' : !empty(lastDrawing) ? '' : hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${index}`}>
+          {play.numbers.map((number, index) => (
+            <div className={`number${index === 5 ? ' powerball' : hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${index}`}>
               {number}
             </div>
           ))}
@@ -45,12 +41,12 @@ export default function NumberCard(props) {
       </CardContent>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {!empty(lastDrawing) ? (
+          {lastDrawing ? (
             <>
               <h4>Matching patterns:</h4>
               <div className="pattern-list">
-                {Object.entries(lastDrawing.stats).map((stat) => (
-                  <div className="pattern">
+                {Object.entries(play.stats).map((stat, key) => (
+                  <div className="pattern" key={`pattern-${key}`}>
                     <div>{stat[1] ? <CheckCircleIcon className="checked" fontSize="small" /> : <RadioButtonUncheckedIcon className="unchecked" fontSize="small" />}</div>
                     {
                       stat[0] === 'isOddDom' ? 'Odd Dominant 3:2 Ratio' 
@@ -64,7 +60,13 @@ export default function NumberCard(props) {
               </div>
             </>
           ) : (
-            <h2>Odd Dominant 3:2 Ratio</h2>
+            <>
+              <h4>Play info:</h4>
+              <div className="play-info">
+                <p><strong>Type:</strong> {play.type}</p>
+                <p><strong>Sum:</strong> {play.numbers.filter((play, index) => index != 5).reduce((a,b) => a + b)}</p>
+              </div>
+            </>
           )}
         </CardContent>
       </Collapse>

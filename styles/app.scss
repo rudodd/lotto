@@ -27,6 +27,10 @@ body {
       display: flex;
       flex-direction: column;
       gap: 0.5rem 0;
+
+      .generate-plays-button {
+        margin-top: 1rem;
+      }
     }
   }
 }
