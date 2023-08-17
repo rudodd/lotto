@@ -67,7 +67,8 @@ export default function Home() {
   useEffect(() => {
     if (!empty(prevResults)) {
       numbers = new Numbers(prevResults);
-      setLastDrawing(numbers.lastDrawing);
+      const stats = numbers.getStats();
+      setLastDrawing({...numbers.lastDrawing, ...stats[0]});
       setOdd(numbers.generatePlay('odd'));
       setEven(numbers.generatePlay('even'));
       setHigh(numbers.generatePlay('high'));

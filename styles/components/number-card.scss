@@ -73,4 +73,27 @@
       transform: rotate(180deg)!important;
     }
   }
+
+  .pattern-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 1rem;
+
+    .pattern {
+      display: flex;
+      font-size: 0.8rem;
+      align-items: center;
+      gap: 0 0.25rem;
+      line-height: 0.75rem;
+
+      .checked {
+        fill: green;
+      }
+
+      .unchecked {
+        fill: #d7d7d7;
+      }
+    }
+  }
 }
