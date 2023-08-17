@@ -7,16 +7,14 @@ import { empty } from '../utils/helpers';
 
 // import components
 import Head from 'next/head'
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-
-// Import icons
 import NumberCard from '../components/NumerCard';
 
 export default function Home() {
 
   let numbers;
   const [loading, setLoading] = useState(true);
+  const [jackpot, setJackpot] = useState(null);
+  const [cashValue, setCashValue] = useState(null);
   const [prevResults, setPrevResults] = useState([]);
   const [lastDrawing, setLastDrawing] = useState(null);
   const [nextDrawing, setNextDrawing] = useState(null);
@@ -38,6 +36,18 @@ export default function Home() {
   }
 
   const fetchLottResults = () => {
+
+    // Fetch the current jackpot
+    fetch('/api/jackpot')
+      .then((res) => {
+        res.json()
+          .then((res) => {
+            setJackpot(res.jackpot);
+            setCashValue(res.cash);
+          })
+      })
+
+    // Fetch winning mumber history
     fetch('/api/lotto-results')
       .then((res) => {
         res.json()
@@ -50,7 +60,6 @@ export default function Home() {
             }).sort((a,b) => b.date - a.date);
             last.length = 100;
             setPrevResults(last);
-
           });
       })
   }
@@ -65,7 +74,6 @@ export default function Home() {
       setLow(numbers.generatePlay('low'));
       setHot(numbers.hot.map((number) => number.number));
       setCold(numbers.cold.map((number) => number.number));
-      console.log(numbers.getStats());
     }
   }, [prevResults])
 
@@ -98,8 +106,6 @@ export default function Home() {
         low: low
       }))
     }
-    console.log(lastDrawing);
-    console.log(nextDrawing);
   }, [prevResults, nextDrawing, lastDrawing, odd, even, high, low, hot, cold])
 
   useEffect(() => {
@@ -112,69 +118,39 @@ export default function Home() {
       {!loading &&
         <div>
           <Head>
-            <title>Combinatorial Lotto Numbers</title>
+            <title>Power Picker</title>
             <meta name="description" content="Powerball combinatorial number generator" />
             <link rel="icon" href="/favicon.ico" />
             <link rel="preconnect" href="https://fonts.googleapis.com" />
           </Head>
 
           <main>
-            <h1>Combinatorial Lotto Numbers</h1>
-            <p>Next drawing: {nextDrawing}</p>
+            <div className="logo">
+              <h1>Power Picker</h1>
+            </div>
+            <div className="current-info">
+              <p>Next drawing: {nextDrawing}</p>
+              <h1>{jackpot}</h1>
+              <h3><span>Est. Cash Value:</span> {cashValue}</h3>
+            </div>
             {!empty(lastDrawing) &&
-              <Card className="play-card">
-                <CardContent className="play-container last-drawing">
-                    <h2>Last Drawing</h2>
-                    <p>{lastDrawing.date.toDateString()}</p>
-                    <div className="number-container">
-                      {lastDrawing.numbers.map((number, key) => (
-                        <div className="number" key={`odd-high-${number}-${key}`}>
-                          {number}
-                        </div>
-                      ))}
-                    </div>
-                </CardContent>
-              </Card>
+              <NumberCard numbers={lastDrawing.numbers} hot={hot} cold={cold} lastDrawing={lastDrawing} />
             }
-            {!empty(odd) &&
-              <NumberCard numbers={odd} hot={hot} cold={cold} />
-            }
-            {/* {!empty(even) &&
-              <div className="play-container">
-                <h2>Even Dominant 3:2 Ratio</h2>
-                <div className="number-container">
-                  {even.map((number, key) => (
-                    <div className={`number${hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${key}`}>
-                      {number}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            }
-            {!empty(high) &&
-              <div className="play-container">
-                <h2>High Dominant 3:2 Ratio</h2>
-                <div className="number-container">
-                  {high.map((number, key) => (
-                    <div className={`number${hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${key}`}>
-                      {number}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            }
-            {!empty(low) &&
-              <div className="play-container">
-                <h2>Low Dominant 3:2 Ratio</h2>
-                <div className="number-container">
-                  {low.map((number, key) => (
-                    <div className={`number${hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${key}`}>
-                      {number}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            } */}
+            <div className="my-numbers">
+              <h3>My Numbers</h3>
+              {!empty(odd) &&
+                <NumberCard numbers={odd} hot={hot} cold={cold} />
+              }
+              {!empty(even) &&
+                <NumberCard numbers={even} hot={hot} cold={cold} />
+              }
+              {!empty(high) &&
+                <NumberCard numbers={high} hot={hot} cold={cold} />
+              }
+              {!empty(low) &&
+                <NumberCard numbers={low} hot={hot} cold={cold} />
+              }
+            </div>
           </main>
 
           <footer>
