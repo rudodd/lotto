@@ -54,7 +54,6 @@ export default class Numbers {
       let dominant = 0;
       let others = 0;
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
-        console.log(dominant);
         let num = this.random();
         if (!numbers.includes(num)) {
           if (dominant < 3 && ((type === 'odd' && this.isOdd(num)) || (type === 'even' && this.isEven(num)) || (type === 'high' && this.isHigh(num)) || (type == 'low' && this.isLow(num)))) {
