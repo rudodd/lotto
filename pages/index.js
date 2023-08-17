@@ -7,7 +7,11 @@ import { empty } from '../utils/helpers';
 
 // import components
 import Head from 'next/head'
-import Image from 'next/image'
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+
+// Import icons
+import NumberCard from '../components/NumerCard';
 
 export default function Home() {
 
@@ -94,6 +98,7 @@ export default function Home() {
         low: low
       }))
     }
+    console.log(lastDrawing);
     console.log(nextDrawing);
   }, [prevResults, nextDrawing, lastDrawing, odd, even, high, low, hot, cold])
 
@@ -110,38 +115,31 @@ export default function Home() {
             <title>Combinatorial Lotto Numbers</title>
             <meta name="description" content="Powerball combinatorial number generator" />
             <link rel="icon" href="/favicon.ico" />
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
           </Head>
 
           <main>
             <h1>Combinatorial Lotto Numbers</h1>
             <p>Next drawing: {nextDrawing}</p>
             {!empty(lastDrawing) &&
-              <div className="last-drawing">
-                <div className="play-container">
-                  <h2>Last Drawing</h2>
-                  <div className="number-container">
-                    {lastDrawing.numbers.map((number, key) => (
-                      <div className="number" key={`odd-high-${number}-${key}`}>
-                        {number}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <Card className="play-card">
+                <CardContent className="play-container last-drawing">
+                    <h2>Last Drawing</h2>
+                    <p>{lastDrawing.date.toDateString()}</p>
+                    <div className="number-container">
+                      {lastDrawing.numbers.map((number, key) => (
+                        <div className="number" key={`odd-high-${number}-${key}`}>
+                          {number}
+                        </div>
+                      ))}
+                    </div>
+                </CardContent>
+              </Card>
             }
             {!empty(odd) &&
-              <div className="play-container">
-                <h2>Odd Dominant 3:2 Ratio</h2>
-                <div className="number-container">
-                  {odd.map((number, key) => (
-                    <div className={`number${hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${key}`}>
-                      {number}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <NumberCard numbers={odd} hot={hot} cold={cold} />
             }
-            {!empty(even) &&
+            {/* {!empty(even) &&
               <div className="play-container">
                 <h2>Even Dominant 3:2 Ratio</h2>
                 <div className="number-container">
@@ -176,7 +174,7 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-            }
+            } */}
           </main>
 
           <footer>
