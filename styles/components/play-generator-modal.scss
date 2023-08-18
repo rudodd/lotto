@@ -1,0 +1,62 @@
+/**
+ * Styles for the PlayGeneratorModal component ******************************************
+ **/
+
+ .MuiModal-backdrop {
+  background: rgba(0,0,0, 0.75) !important;
+  backdrop-filter: blur(2px);
+ }
+
+.play-generator-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  max-width: $max-width;
+  display: flex;
+  flex-direction: column;
+
+  .close-modal-button {
+    margin-left: auto;
+
+    svg {
+      fill: white;
+    }
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 4px;
+    color: $dark-gray;
+    padding: 1rem;
+
+    p {
+      font-size: small;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem 0;
+      background: $light-gray;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 4px;;
+
+      .modal-form-section {
+
+        &.checkbox {
+          
+          * {
+            font-size: medium;
+          }
+        }
+      }
+    }
+
+    .generate-plays-button {
+      width: 100%;
+    }
+  }
+}

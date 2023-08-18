@@ -64,6 +64,7 @@ export default function NumberCard(props) {
               <h4>Play info:</h4>
               <div className="play-info">
                 <p><strong>Type:</strong> {play.type}</p>
+                <p><strong>Exclusions:</strong> {play.exclusions}</p>
                 <p><strong>Sum:</strong> {play.numbers.filter((play, index) => index != 5).reduce((a,b) => a + b)}</p>
               </div>
             </>

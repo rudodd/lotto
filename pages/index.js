@@ -9,6 +9,7 @@ import { empty, titleCase } from '../utils/helpers';
 import Head from 'next/head'
 import Button from '@mui/material/Button';
 import NumberCard from '../components/NumerCard';
+import PlayGeneratorModal from '../components/PlayGeneratorModal';
 
 export default function Home() {
 
@@ -22,6 +23,7 @@ export default function Home() {
   const [plays, setPlays] = useState([]);
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
+  const [playModalOpen, setPlayModalOpen] = useState(false);
 
   const getNextDrawing = () => {
     const today = new Date().getDay();
@@ -62,16 +64,33 @@ export default function Home() {
       })
   }
 
-  const generatePlays = () => {
+  const generatePlays = (patterns, exclusions) => {
+    const includeRandom = patterns.includes('random');
+    if (includeRandom) {
+      patterns = patterns.filter((pattern) => pattern != 'random');
+    }
     const generatedPlays = [];
-    ['odd', 'even', 'high', 'low'].forEach((type) => {
+    patterns.forEach((type) => {
       generatedPlays.push({
-        numbers: numbers.generatePlay(type),
-        type: titleCase(type) + ' Dominant 3:2 Ratio'
+        numbers: numbers.generatePlay(type, exclusions),
+        type: titleCase(type) + ' Dominant 3:2 Ratio',
+        exclusions: !empty(exclusions) ? exclusions.map((name) => titleCase(name)).toString() : 'None'
       })
     })
+    if (includeRandom) {
+      generatedPlays.push({
+        numbers: numbers.generatePlay(null, exclusions),
+        type: 'Random Play (No Pattern)',
+        exclusions: !empty(exclusions) ? exclusions.map((name) => titleCase(name)).toString() : 'None'
+      })
+    }
     window.localStorage.setItem('power-picker-plays', JSON.stringify(generatedPlays))
     setPlays(generatedPlays);
+    closeModal();
+  }
+
+  const closeModal = () => {
+    setPlayModalOpen(false);
   }
 
   useEffect(() => {
@@ -136,13 +155,15 @@ export default function Home() {
                   {plays.map((play, key) => (
                     <NumberCard play={play} hot={hot} cold={cold} key={`generated-play-${key}`} />
                   ))}
-                  <Button className="generate-plays-button" variant="contained" onClick={() => generatePlays()}>Generate New Plays</Button>
+                  <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate Plays</Button>
                 </>
               ) : (
-                <Button className="generate-plays-button" variant="contained" onClick={() => generatePlays()}>Generate Plays</Button>
+                <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate Plays</Button>
               )}
             </div>
           </main>
+
+          <PlayGeneratorModal open={playModalOpen} close={closeModal} generatePlay={generatePlays} />
 
           <footer>
 
