@@ -1,3 +1,5 @@
+import CssBaseline from '@mui/material/CssBaseline';
+
 import '../styles/app.scss';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -6,7 +8,13 @@ import '@fontsource/roboto/700.css';
 
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </>
+    
+  )
 }
 
 export default MyApp

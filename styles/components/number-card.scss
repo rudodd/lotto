@@ -55,9 +55,24 @@
 
         &.powerball {
           background: rgb(200,17,17);
-          background: radial-gradient(circle, rgba(200,17,17,0.7) 33%, rgba(200,17,17,1) 100%);
+          background: radial-gradient(circle, rgba(200,17,17,0.7) 33%, #c81111 100%);
           color: white;
           border: solid 1px darkred;
+        }
+
+        &.check {
+          position: relative;
+
+          &::after {
+            position: absolute;
+            content: url(/img/check-mark.svg);
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            top: 0;
+            right: 0;
+            transform: translate(35%, -60%);
+          }
         }
       }
 
@@ -82,7 +97,7 @@
 
     .pattern {
       display: flex;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       align-items: center;
       gap: 0 0.25rem;
       line-height: 0.75rem;

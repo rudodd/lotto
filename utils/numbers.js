@@ -41,12 +41,15 @@ export default class Numbers {
   isLow(x) { return x <= 35 };
 
   // Number generator loop
-  generateNumbers = (type) => {
+  generateNumbers = (type, exclusions) => {
+    const hotNumbers = this.hot.map((obj) => obj.number);
+    const coldNumbers = this.cold.map((obj) => obj.number);
     const numbers = [];
     if (type === null) {
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
+        const excludedNumbers = empty(exclusions) ? [...numbers] : exclusions.includes('hot') && exclusions.includes('cold') ? [...numbers, ...hotNumbers, ...coldNumbers] : exclusions.includes('hot') ? [...numbers, ...hotNumbers] : exclusions.includes('cold') ? [...numbers, ...coldNumbers] : [...numbers];
         let num = this.random();
-        if (!numbers.includes(num)) {
+        if (!excludedNumbers.includes(num)) {
           numbers.push(num);
         }
       }
@@ -55,7 +58,8 @@ export default class Numbers {
       let others = 0;
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
         let num = this.random();
-        if (!numbers.includes(num)) {
+        const excludedNumbers = empty(exclusions) ? [...numbers] : exclusions.includes('hot') && exclusions.includes('cold') ? [...numbers, ...hotNumbers, ...coldNumbers] : exclusions.includes('hot') ? [...numbers, ...hotNumbers] : exclusions.includes('cold') ? [...numbers, ...coldNumbers] : [...numbers];
+        if (!excludedNumbers.includes(num)) {
           if (dominant < 3 && ((type === 'odd' && this.isOdd(num)) || (type === 'even' && this.isEven(num)) || (type === 'high' && this.isHigh(num)) || (type == 'low' && this.isLow(num)))) {
             numbers.push(num);
             dominant++;
@@ -70,10 +74,10 @@ export default class Numbers {
   }
 
   // Main play generator
-  generatePlay(type = null) {
+  generatePlay(type = null, exclusions = []) {
     let play = [];
     for (let i = 0; play.length === 0 && i < 1000; i++) {
-      const playAttempt = this.generateNumbers(type);
+      const playAttempt = this.generateNumbers(type, exclusions);
       const sum = playAttempt.reduce((a, b) => a + b);
       if (playAttempt.length === 5 && (sum >= 130 && sum <= 221)) {
         play = playAttempt;

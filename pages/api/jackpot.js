@@ -2,7 +2,7 @@
 import * as cheerio from 'cheerio';
 
 export default function handler(req, res) {
-  fetch('https://www.powerball.com')
+  return fetch('https://www.powerball.com')
     .then((response) => {
       if (response.ok) {
         response.text()
