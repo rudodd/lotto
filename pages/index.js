@@ -11,6 +11,9 @@ import Button from '@mui/material/Button';
 import NumberCard from '../components/NumerCard';
 import PlayGeneratorModal from '../components/PlayGeneratorModal';
 
+// Import icons
+import ReplayIcon from '@mui/icons-material/Replay';
+
 export default function Home() {
 
   const [loading, setLoading] = useState(true);
@@ -21,6 +24,7 @@ export default function Home() {
   const [lastDrawing, setLastDrawing] = useState(null);
   const [nextDrawing, setNextDrawing] = useState(null);
   const [plays, setPlays] = useState([]);
+  const [playDate, setPlayDate] = useState(null);
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
   const [playModalOpen, setPlayModalOpen] = useState(false);
@@ -84,13 +88,19 @@ export default function Home() {
         exclusions: !empty(exclusions) ? exclusions.map((name) => titleCase(name)).toString() : 'None'
       })
     }
-    window.localStorage.setItem('power-picker-plays', JSON.stringify(generatedPlays))
+    window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: generatedPlays, playDate: nextDrawing}))
     setPlays(generatedPlays);
+    setPlayDate(nextDrawing);
     closeModal();
   }
 
   const closeModal = () => {
     setPlayModalOpen(false);
+  }
+
+  const replay = () => {
+    window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: plays.plays, playDate: nextDrawing}))
+    setPlayDate(nextDrawing);
   }
 
   useEffect(() => {
@@ -119,7 +129,8 @@ export default function Home() {
   useEffect(() => {
     const savedPlays = JSON.parse(window.localStorage.getItem('power-picker-plays'));
     if (!empty(savedPlays)) {
-      setPlays(savedPlays);
+      setPlays(savedPlays.plays);
+      setPlayDate(savedPlays.playDate);
     }
     fetchLottResults();
     getNextDrawing();
@@ -130,7 +141,7 @@ export default function Home() {
       {!loading &&
         <div>
           <Head>
-            <title>Power Picker</title>
+            <title>Power Patterns</title>
             <meta name="description" content="Powerball combinatorial number generator" />
             <link rel="icon" href="/favicon.ico" />
             <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -138,7 +149,7 @@ export default function Home() {
 
           <main>
             <div className="logo">
-              <h1>Power Picker</h1>
+              <h1><span>P</span><span>o</span><span>w</span><span>e</span><span>r</span> Patterns</h1>
             </div>
             <div className="current-info">
               <p>Next drawing: {nextDrawing}</p>
@@ -149,16 +160,41 @@ export default function Home() {
               <NumberCard play={lastDrawing} hot={hot} cold={cold} lastDrawing />
             }
             <div className="my-numbers">
-              <h3>My Numbers</h3>
+              <div className="my-numbers-title-block">
+                <h3>My Numbers</h3>
+                {new Date(nextDrawing) > new Date(playDate) &&
+                  <Button 
+                    className="replay-button" 
+                    variant="outlined" 
+                    size="small" 
+                    startIcon={<ReplayIcon />}
+                    onClick={() => replay()}
+                  >
+                    Play Again
+                  </Button>
+                }
+              </div>
               {!empty(plays) ? (
                 <>
+                  <p>For the {playDate} drawing</p>
                   {plays.map((play, key) => (
-                    <NumberCard play={play} hot={hot} cold={cold} key={`generated-play-${key}`} />
+                    <NumberCard 
+                      play={play} 
+                      hot={hot} 
+                      cold={cold} 
+                      key={`generated-play-${key}`} 
+                      winningNumbers={!empty(prevResults.filter((drawing) => drawing.date.toDateString() == playDate)) ? prevResults.filter((drawing) => drawing.date.toDateString() == playDate)[0].numbers : []} 
+                    />
                   ))}
-                  <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate Plays</Button>
+                  <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate New Plays</Button>
                 </>
               ) : (
-                <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate Plays</Button>
+                <>
+                  <div className="empty-card">
+                    <p>You have not generated any numbers.</p>
+                  </div>
+                  <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate Plays</Button>
+                </>
               )}
             </div>
           </main>

@@ -1,5 +1,8 @@
 // Import library functionality
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
+
+// import custom functionality
+import { empty } from '../utils/helpers';
 
 // import components
 import Card from '@mui/material/Card';
@@ -14,8 +17,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function NumberCard(props) {
 
-  const { play, hot, cold, lastDrawing } = props;
+  const { play, hot, cold, lastDrawing, winningNumbers } = props;
   const [expanded, setExpanded] = useState(false);
+  const [powerBall, setPowerBall] = useState(100);
+  const [regularNumbers, setRegularNumbers] = useState([100]);
+
+  useEffect(() => {
+    if (!empty(winningNumbers)) {
+      setPowerBall(winningNumbers[5]);
+      const tempNums = [...winningNumbers];
+      tempNums.length = 5;
+      setRegularNumbers(tempNums);
+    }
+
+    console.log(winningNumbers);
+  }, [winningNumbers])
 
   return (
     <Card className="play-card">
@@ -28,7 +44,10 @@ export default function NumberCard(props) {
         }
         <div className="number-container">
           {play.numbers.map((number, index) => (
-            <div className={`number${index === 5 ? ' powerball' : hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}`} key={`odd-high-${number}-${index}`}>
+            <div 
+              className={`number${index === 5 ? ' powerball' : hot.includes(number) ? ' hot' : cold.includes(number) ? ' cold' : ''}${!lastDrawing && ((index < 5 && regularNumbers.includes(number)) || (index === 5 && powerBall === number)) ? ' check' : ''}`} 
+              key={`odd-high-${number}-${index}`}
+            >
               {number}
             </div>
           ))}

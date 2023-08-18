@@ -1,5 +1,8 @@
 // Import library components
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+
+// Import custom functionality
+import { empty } from '../utils/helpers';
 
 // import components
 import Box from '@mui/material/Box';
@@ -71,7 +74,7 @@ export default function PlayGeneratorModal(props) {
               <FormControlLabel control={<Switch onChange={(e) => toggleExclusion(e.target.checked, 'cold')}/>} label="Exclude Cold Numbers" />
             </FormGroup>
           </form>
-          <Button onClick={()=> handleGenerate()} className="generate-plays-button" variant="contained">Generate</Button>
+          <Button disabled={empty(patterns)} onClick={()=> handleGenerate()} className="generate-plays-button" variant="contained">Generate</Button>
         </div>
       </Box>
     </Modal>
