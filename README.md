@@ -1,34 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Power Patterns
+
+Power Patterns is a Powerball number generator focused primarily on generating numbers matching higher likelihood combinatorial patterns, specifically 3:2 ratio patterns among the 50/50 probability plays (odd/even and high/low).  Additionally it ensures that all plays fall in the “balanced” range as defined by the sum of the numbers falling between 130-221.
+
+## Features
+- Displays the current jackpot, estimated cash value, and draw date for the nexting drawing (scraped from powerball.com)
+- Analyzes previous 100 draws to determine hot and cold numbers (data pulled from the state of NY's publishing of powerball historical data)
+- Randomly generates plays matching either one of four pre-defined combinatorial patterns or a purely randomly generated play
+- Ensures all plays fall in the "balanced" range with a sum totaling 130-221
+- Allows for the optional exclusion of both or either hot or cold numbers as determined by the last 100 draws
+- Highlights hot and cold numbers that have been generated
+- Saves generated plays in localStorage and checks for winners within generated plays after the draws has taken place for a given play
 
 ## Getting Started
 
-First, run the development server:
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+It uses minimal additional npm packages, but those used are as follows:
+- [MUI (Material UI)](https://mui.com/material-ui/getting-started/) - Used for UI components / general styling
+- [SASS](https://www.npmjs.com/package/sass) - Used for SCSS integration
+- [Cheerio](https://www.npmjs.com/package/cheerio) - Used to parse the HTML from powerball.com to get next drawing data
+
+To run the development server:
 
 ```bash
+npm ci
 npm run dev
 # or
 yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
