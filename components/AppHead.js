@@ -1,4 +1,4 @@
-// import components
+// Import components
 import Head from 'next/head'
 
 export default function AppHead() {

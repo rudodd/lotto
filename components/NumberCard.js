@@ -1,10 +1,10 @@
 // Import library functionality
 import React, {useEffect, useState } from 'react';
 
-// import custom functionality
+// Import custom functionality
 import { empty } from '../utils/helpers';
 
-// import components
+// Import components
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';

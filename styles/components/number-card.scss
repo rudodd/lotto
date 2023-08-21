@@ -8,7 +8,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    padding-bottom: 16px !important;
+    padding-bottom: 16px !important; // !important to override te MUI default which has higher specificity
     background: #f5f5f5;
 
     p {
@@ -85,7 +85,7 @@
   .card-expand-button {
 
     svg.flipped {
-      transform: rotate(180deg)!important;
+      transform: rotate(180deg)!important; // !important to override te MUI default which has higher specificity
     }
   }
 

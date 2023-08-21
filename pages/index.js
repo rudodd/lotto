@@ -1,11 +1,11 @@
-// import library functionality
+// Import library functionality
 import React, { useEffect, useState } from 'react';
 
-// import custom functionality
+// Import custom functionality
 import Numbers from '../utils/numbers';
 import { empty, titleCase } from '../utils/helpers';
 
-// import components
+// Import components
 import AppHead from '../components/AppHead';
 import AppSkeleton from '../components/AppSkeleton';
 import Button from '@mui/material/Button';
@@ -30,6 +30,7 @@ export default function Home() {
   const [cold, setCold] = useState([]);
   const [playModalOpen, setPlayModalOpen] = useState(false);
 
+  // Determine the next drawing date based on the date - drawings are Mon, Wed, Sat
   const getNextDrawing = () => {
     const today = new Date().getDay();
     const drawingDays = [1, 3, 6];
@@ -40,6 +41,7 @@ export default function Home() {
     setNextDrawing(nextDrawing.toDateString());
   }
 
+  // Fatch all the lotto data from third parties
   const fetchLottResults = () => {
 
     // Fetch the current jackpot
@@ -69,6 +71,7 @@ export default function Home() {
       })
   }
 
+  // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
   const generatePlays = (patterns, exclusions) => {
     const includeRandom = patterns.includes('random');
     if (includeRandom) {
@@ -92,13 +95,10 @@ export default function Home() {
     window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: generatedPlays, playDate: nextDrawing}))
     setPlays(generatedPlays);
     setPlayDate(nextDrawing);
-    closeModal();
-  }
-
-  const closeModal = () => {
     setPlayModalOpen(false);
   }
 
+  // Function to reuse the same pay from the last drawing for the next drawing
   const replay = () => {
     window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: plays.plays, playDate: nextDrawing}))
     setPlayDate(nextDrawing);
@@ -197,12 +197,7 @@ export default function Home() {
               )}
             </div>
           </main>
-
-          <PlayGeneratorModal open={playModalOpen} close={closeModal} generatePlay={generatePlays} />
-
-          <footer>
-
-          </footer>
+          <PlayGeneratorModal open={playModalOpen} close={() => setPlayModalOpen(false)} generatePlay={generatePlays} />
         </div>
       )}
     </>

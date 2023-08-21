@@ -3,7 +3,7 @@
  **/
 
  .MuiModal-backdrop {
-  background: rgba(0,0,0, 0.75) !important;
+  background: rgba(0,0,0, 0.75) !important; // !important to override te MUI default which has higher specificity
   backdrop-filter: blur(2px);
  }
 
