@@ -124,8 +124,8 @@ export default function Home() {
       !empty(cold)
     ) {
       setTimeout(() => {
-        setLoading(false);
-      }, 1000)
+        setLoading(false); // Use setTimeout to avoid skeleton flashing
+      }, 500)
     }
   }, [prevResults, nextDrawing, lastDrawing, hot, cold])
 
