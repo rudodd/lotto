@@ -30,24 +30,33 @@ export default class Numbers {
     this.cold = Object.entries(this.count).map((number) => { return {number: Number(number[0]), count: number[1].count}}).sort((a,b) => a.count - b.count).slice(0, 5);
   }
 
-  // Random number generators
+  // Random number generator helpers
   random() { return Math.floor(Math.random() * (this.limit - 1) + 1) };
   powerBall() { return Math.floor(Math.random() * (26 - 1) + 1)  };
 
-  // Number checkers
+  // Number checker helpers
   isOdd(x) { return x % 2 !== 0 };
   isEven(x) { return x % 2 === 0 };
   isHigh(x) { return x > 35};
   isLow(x) { return x <= 35 };
 
-  // Number generator loop
-  generateNumbers = (type, exclusions) => {
+  // Helper to generate an array of exlcuded nunmbers
+  getExcludedNumbers = (exclusions, numbers) => {
     const hotNumbers = this.hot.map((obj) => obj.number);
     const coldNumbers = this.cold.map((obj) => obj.number);
+    return empty(exclusions) ? [...numbers] 
+      : exclusions.includes('hot') && exclusions.includes('cold') ? [...numbers, ...hotNumbers, ...coldNumbers] 
+      : exclusions.includes('hot') ? [...numbers, ...hotNumbers] 
+      : exclusions.includes('cold') ? [...numbers, ...coldNumbers] 
+      : [...numbers];
+  }
+
+  // Number generator loop
+  generateNumbers = (type, exclusions) => {
     const numbers = [];
     if (type === null) {
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
-        const excludedNumbers = empty(exclusions) ? [...numbers] : exclusions.includes('hot') && exclusions.includes('cold') ? [...numbers, ...hotNumbers, ...coldNumbers] : exclusions.includes('hot') ? [...numbers, ...hotNumbers] : exclusions.includes('cold') ? [...numbers, ...coldNumbers] : [...numbers];
+        const excludedNumbers = this.getExcludedNumbers(exclusions, numbers);
         let num = this.random();
         if (!excludedNumbers.includes(num)) {
           numbers.push(num);
@@ -58,7 +67,7 @@ export default class Numbers {
       let others = 0;
       for (let i = 0; numbers.length < 5 && i < 100000; i++) {
         let num = this.random();
-        const excludedNumbers = empty(exclusions) ? [...numbers] : exclusions.includes('hot') && exclusions.includes('cold') ? [...numbers, ...hotNumbers, ...coldNumbers] : exclusions.includes('hot') ? [...numbers, ...hotNumbers] : exclusions.includes('cold') ? [...numbers, ...coldNumbers] : [...numbers];
+        const excludedNumbers = this.getExcludedNumbers(exclusions, numbers);
         if (!excludedNumbers.includes(num)) {
           if (dominant < 3 && ((type === 'odd' && this.isOdd(num)) || (type === 'even' && this.isEven(num)) || (type === 'high' && this.isHigh(num)) || (type == 'low' && this.isLow(num)))) {
             numbers.push(num);
