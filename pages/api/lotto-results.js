@@ -1,5 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
+// Fetch historical powerball data from NY's API
 export default function handler(req, res) {
   return fetch('https://data.ny.gov/api/views/d6yy-54nr/rows.json')
     .then((response) => {

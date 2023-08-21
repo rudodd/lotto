@@ -1,6 +1,7 @@
-// ES6 or TypeScript:
+// Import library functionality
 import * as cheerio from 'cheerio';
 
+// Scrape the latest powerball data from powerball.com
 export default function handler(req, res) {
   return fetch('https://www.powerball.com')
     .then((response) => {

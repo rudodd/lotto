@@ -1,4 +1,4 @@
-// import components
+// Import components
 import Skeleton from '@mui/material/Skeleton';
 
 export default function AppSkeleton() {

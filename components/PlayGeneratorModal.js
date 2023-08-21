@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 // Import custom functionality
 import { empty } from '../utils/helpers';
 
-// import components
+// Import components
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
