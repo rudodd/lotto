@@ -2,6 +2,8 @@
 
 Power Patterns is a Powerball number generator focused primarily on generating numbers matching higher likelihood combinatorial patterns, specifically 3:2 ratio patterns among the 50/50 probability plays (odd/even and high/low).  Additionally it ensures that all plays fall in the “balanced” range as defined by the sum of the numbers falling between 130-221.
 
+Live app (designed for use on mobile): [lotto.rustindodd.com](https://lotto.rustindodd.com)
+
 ## Features
 - Displays the current jackpot, estimated cash value, and draw date for the nexting drawing (scraped from powerball.com)
 - Analyzes previous 100 draws to determine hot and cold numbers (data pulled from the state of NY's publishing of powerball historical data)
