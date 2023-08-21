@@ -29,8 +29,6 @@ export default function NumberCard(props) {
       tempNums.length = 5;
       setRegularNumbers(tempNums);
     }
-
-    console.log(winningNumbers);
   }, [winningNumbers])
 
   return (
