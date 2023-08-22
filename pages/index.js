@@ -73,6 +73,8 @@ export default function Home() {
 
   // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
   const generatePlays = (patterns, exclusions) => {
+    setPlays([]);
+    setPlayDate(null);
     const includeRandom = patterns.includes('random');
     if (includeRandom) {
       patterns = patterns.filter((pattern) => pattern != 'random');
