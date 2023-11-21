@@ -1,11 +1,12 @@
 // Import components
 import Head from 'next/head'
 
-export default function AppHead() {
+export default function AppHead(props) {
+  const { title } = props
 
   return (
     <Head>
-      <title>Power Patterns</title>
+      <title>{title ? `${title} - Power Patterns` : "Power Patterns"}</title>
       <meta name="description" content="Powerball combinatorial number generator" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="apple-touch-icon" sizes="57x57" href="/img/icon/apple-icon-57x57.png" />

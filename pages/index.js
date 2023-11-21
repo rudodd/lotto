@@ -6,7 +6,7 @@ import Numbers from '../utils/numbers';
 import { empty, titleCase } from '../utils/helpers';
 
 // Import components
-import AppHead from '../components/AppHead';
+import AppContainer from '../components/AppContainer';
 import AppSkeleton from '../components/AppSkeleton';
 import Button from '@mui/material/Button';
 import NumberCard from '../components/NumberCard';
@@ -14,6 +14,7 @@ import PlayGeneratorModal from '../components/PlayGeneratorModal';
 
 // Import icons
 import ReplayIcon from '@mui/icons-material/Replay';
+import AppHead from '../components/AppHead';
 
 export default function Home() {
 
@@ -144,14 +145,13 @@ export default function Home() {
   return (
     <>
       {loading ? (
-        <AppSkeleton />
-      ) : (
-        <div>
+        <>
           <AppHead />
-          <main>
-            <div className="logo">
-              <h1><span>P</span><span>o</span><span>w</span><span>e</span><span>r</span> Patterns</h1>
-            </div>
+          <AppSkeleton />
+        </>
+      ) : (
+        <>
+          <AppContainer>
             <div className="current-info">
               <p>Next drawing: {nextDrawing}</p>
               <h1>{jackpot}</h1>
@@ -198,9 +198,9 @@ export default function Home() {
                 </>
               )}
             </div>
-          </main>
+          </AppContainer>
           <PlayGeneratorModal open={playModalOpen} close={() => setPlayModalOpen(false)} generatePlay={generatePlays} />
-        </div>
+        </>
       )}
     </>
   )
