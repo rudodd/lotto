@@ -1,5 +1,6 @@
 // Import library functionality
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useSession } from 'next-auth/react';
 
 // Import custom functionality
 import Numbers from '../utils/numbers';
@@ -15,62 +16,44 @@ import PlayGeneratorModal from '../components/PlayGeneratorModal';
 // Import icons
 import ReplayIcon from '@mui/icons-material/Replay';
 import AppHead from '../components/AppHead';
+import useLotto from '../utils/hooks/useLotto';
 
 export default function Home() {
 
   const [loading, setLoading] = useState(true);
-  const [numbers, setNumbers] = useState(null);
-  const [jackpot, setJackpot] = useState(null);
-  const [cashValue, setCashValue] = useState(null);
-  const [prevResults, setPrevResults] = useState([]);
-  const [lastDrawing, setLastDrawing] = useState(null);
-  const [nextDrawing, setNextDrawing] = useState(null);
   const [plays, setPlays] = useState([]);
   const [playDate, setPlayDate] = useState(null);
-  const [hot, setHot] = useState([]);
-  const [cold, setCold] = useState([]);
   const [playModalOpen, setPlayModalOpen] = useState(false);
+  const session = useSession();
+  const { loading: lottoLoading, numbers: prevResults, cashValue, jackpot } = useLotto();
+
+  const numbers = useMemo(() => {
+    return !empty(prevResults) ? new Numbers(prevResults): null;
+  }, [prevResults])
+
+  const lastDrawing = useMemo(() => {
+    const stats = !empty(numbers) ? numbers.getStats() : null;
+    return !empty(stats) ? {...numbers.lastDrawing, ...stats.data[0]} : {};
+  }, [numbers])
+
+  const hot = useMemo(() => {
+    return !empty(numbers) ? numbers.hot.map((number) => number.number) : [];
+  }, [numbers])
+
+  const cold = useMemo(() => {
+    return !empty(numbers) ? numbers.cold.map((number) => number.number) : [];
+  }, [numbers])
 
   // Determine the next drawing date based on the date - drawings are Mon, Wed, Sat
-  const getNextDrawing = () => {
+  const nextDrawing = useMemo(() => {
     const today = new Date().getDay();
     const drawingDays = [1, 3, 6];
     const oneDay = [0, 2, 5];
     const daysBetween = drawingDays.includes(today) ? 0 : oneDay.includes(today) ? 1 : 2;
-    const nextDrawing = new Date();
-    nextDrawing.setDate(nextDrawing.getDate() + daysBetween)
-    setNextDrawing(nextDrawing.toDateString());
-  }
-
-  // Fatch all the lotto data from third parties
-  const fetchLottResults = () => {
-
-    // Fetch the current jackpot
-    fetch('/api/jackpot')
-      .then((res) => {
-        res.json()
-          .then((res) => {
-            setJackpot(res.jackpot);
-            setCashValue(res.cash);
-          })
-      })
-
-    // Fetch winning mumber history
-    fetch('/api/lotto-results')
-      .then((res) => {
-        res.json()
-          .then((json) => {
-            const last = json.data.map((draw) => {
-              return {
-                date: new Date(draw[8]),
-                numbers: draw[9].split(' ').map((number) => Number(number))
-              }
-            }).sort((a,b) => b.date - a.date);
-            last.length = 100;
-            setPrevResults(last);
-          });
-      })
-  }
+    const next = new Date();
+    next.setDate(next.getDate() + daysBetween)
+    return next.toDateString();
+  }, [])
 
   // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
   const generatePlays = (patterns, exclusions) => {
@@ -108,29 +91,12 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (!empty(prevResults)) {
-      const numbers = new Numbers(prevResults);
-      const stats = numbers.getStats();
-      setLastDrawing({...numbers.lastDrawing, ...stats.data[0]});
-      setHot(numbers.hot.map((number) => number.number));
-      setCold(numbers.cold.map((number) => number.number));
-      setNumbers(numbers);
-    }
-  }, [prevResults])
-
-  useEffect(() => {
-    if (
-      !empty(prevResults) &&
-      !empty(lastDrawing) &&
-      !empty(nextDrawing) &&
-      !empty(hot) &&
-      !empty(cold)
-    ) {
+    if ( !empty(prevResults) && !empty(lastDrawing) ) {
       setTimeout(() => {
         setLoading(false); // Use setTimeout to avoid skeleton flashing
       }, 500)
     }
-  }, [prevResults, nextDrawing, lastDrawing, hot, cold])
+  }, [prevResults, lastDrawing])
 
   useEffect(() => {
     const savedPlays = JSON.parse(window.localStorage.getItem('power-picker-plays'));
@@ -138,8 +104,6 @@ export default function Home() {
       setPlays(savedPlays.plays);
       setPlayDate(savedPlays.playDate);
     }
-    fetchLottResults();
-    getNextDrawing();
   }, [])
 
   return (
@@ -151,7 +115,7 @@ export default function Home() {
         </>
       ) : (
         <>
-          <AppContainer>
+          <AppContainer session={session}>
             <div className="current-info">
               <p>Next drawing: {nextDrawing}</p>
               <h1>{jackpot}</h1>

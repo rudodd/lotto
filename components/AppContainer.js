@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import React from 'react';
+import { signIn, signOut } from 'next-auth/react';
 
 // import components
 import AppHead from './AppHead';
@@ -7,12 +7,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
 
 export default function AppContainer(props) {
-  const { title } = props;
-  const session = useSession();
-
-  useEffect(() => {
-    console.log(session);
-  }, [session])
+  const { title, session } = props;
 
   return (
     <div>
