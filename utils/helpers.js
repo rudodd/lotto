@@ -33,3 +33,14 @@ export const empty = (variable) => {
 export const titleCase = (string) => {
   return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
 }
+
+// Determine the next drawing date based on the date - drawings are Mon, Wed, Sat
+export const nextDate = () => {
+  const today = new Date().getDay();
+  const drawingDays = [1, 3, 6];
+  const oneDay = [0, 2, 5];
+  const daysBetween = drawingDays.includes(today) ? 0 : oneDay.includes(today) ? 1 : 2;
+  const next = new Date();
+  next.setDate(next.getDate() + daysBetween)
+  return next.toDateString();
+}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 export default function useLotto() {
   const [jackpotLoading, setJackpotLoading] = useState(true);

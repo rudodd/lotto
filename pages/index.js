@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 // Import custom functionality
 import Numbers from '../utils/numbers';
 import useAppSession from '../utils/hooks/useAppSession';
-import { empty, titleCase } from '../utils/helpers';
+import { empty, nextDate, titleCase } from '../utils/helpers';
 
 // Import components
 import AppContainer from '../components/AppContainer';
@@ -23,33 +23,15 @@ export default function Home() {
   const { loading: playsLoading, session, plays, savePlays }= useAppSession();
   const { loading: jackpotLoading, numbers: prevResults, cashValue, jackpot } = useLotto();
 
-  const numbers = useMemo(() => {
-    return !empty(prevResults) ? new Numbers(prevResults): null;
-  }, [prevResults])
-
+  // Memoize page values
+  const nextDrawing = useMemo(() => nextDate(), []);
+  const numbers = useMemo(() => !empty(prevResults) ? new Numbers(prevResults): null, [prevResults])
+  const hot = useMemo(() => !empty(numbers) ? numbers.hot.map((number) => number.number) : [], [numbers])
+  const cold = useMemo(() => !empty(numbers) ? numbers.cold.map((number) => number.number) : [], [numbers])
   const lastDrawing = useMemo(() => {
     const stats = !empty(numbers) ? numbers.getStats() : null;
     return !empty(stats) ? {...numbers.lastDrawing, ...stats.data[0]} : {};
   }, [numbers])
-
-  const hot = useMemo(() => {
-    return !empty(numbers) ? numbers.hot.map((number) => number.number) : [];
-  }, [numbers])
-
-  const cold = useMemo(() => {
-    return !empty(numbers) ? numbers.cold.map((number) => number.number) : [];
-  }, [numbers])
-
-  // Determine the next drawing date based on the date - drawings are Mon, Wed, Sat
-  const nextDrawing = useMemo(() => {
-    const today = new Date().getDay();
-    const drawingDays = [1, 3, 6];
-    const oneDay = [0, 2, 5];
-    const daysBetween = drawingDays.includes(today) ? 0 : oneDay.includes(today) ? 1 : 2;
-    const next = new Date();
-    next.setDate(next.getDate() + daysBetween)
-    return next.toDateString();
-  }, [])
 
   // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
   const generatePlays = (patterns, exclusions) => {
