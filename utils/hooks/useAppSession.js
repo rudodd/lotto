@@ -30,7 +30,7 @@ export default function useAppSession() {
     } else {
       setPlays({numbers: numbers, drawingDate: date});
     }
-  }, [])
+  }, [session])
 
   useEffect(() => {
     if (session.status === 'authenticated') {
