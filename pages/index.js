@@ -20,8 +20,8 @@ import useLotto from '../utils/hooks/useLotto';
 
 export default function Home() {
   const [playModalOpen, setPlayModalOpen] = useState(false);
-  const { session, plays, savePlays }= useAppSession();
-  const { loading, numbers: prevResults, cashValue, jackpot } = useLotto();
+  const { loading: playsLoading, session, plays, savePlays }= useAppSession();
+  const { loading: jackpotLoading, numbers: prevResults, cashValue, jackpot } = useLotto();
 
   const numbers = useMemo(() => {
     return !empty(prevResults) ? new Numbers(prevResults): null;
@@ -78,7 +78,7 @@ export default function Home() {
 
   return (
     <>
-      {loading ? (
+      {playsLoading || jackpotLoading ? (
         <>
           <AppHead />
           <AppSkeleton />

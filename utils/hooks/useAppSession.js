@@ -5,9 +5,11 @@ import axios from 'axios';
 export default function useAppSession() {
   const session = useSession();
   const [plays, setPlays] = useState({numbers: null, drawingDate: null});
+  const [playsLoading, setPlaysLoading] = useState(false);
   const userId = useRef(null);
 
   const getPlay = useCallback(async () => {
+    setPlaysLoading(true);
     if (session.data.user.email) {
       axios.post('/api/user-data', {email: session.data.user.email})
         .then((res) => {
@@ -20,6 +22,7 @@ export default function useAppSession() {
   }, [session])
 
   const savePlays = useCallback(async (numbers, date)=> {
+    setPlaysLoading(true);
     if (session.status === 'authenticated') {
       axios.put('/api/user-data', {id: userId.current, numbers: numbers, drawingDate: date})
         .then((res) => {
@@ -38,5 +41,11 @@ export default function useAppSession() {
     }
   }, [session])
 
-  return { session, plays, savePlays };
+  useEffect(() => {
+    if (playsLoading && session.status !== 'loading') {
+      setPlaysLoading(false);
+    }
+  }, [plays, session])
+
+  return { session, plays, playsLoading, savePlays };
 }
