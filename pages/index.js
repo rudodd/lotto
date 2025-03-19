@@ -1,5 +1,5 @@
 // Import library functionality
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 
 // Import custom functionality
 import Numbers from '../utils/numbers';
@@ -52,7 +52,7 @@ export default function Home() {
   }, [])
 
   // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
-  const generatePlays = useCallback((patterns, exclusions) => {
+  const generatePlays = (patterns, exclusions) => {
     const includeRandom = patterns.includes('random');
     if (includeRandom) {
       patterns = patterns.filter((pattern) => pattern != 'random');
@@ -74,7 +74,7 @@ export default function Home() {
     }
     savePlays(generatedPlays, nextDrawing);
     setPlayModalOpen(false);
-  }, [])
+  }
 
   return (
     <>
