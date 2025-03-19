@@ -1,9 +1,9 @@
 // Import library functionality
 import React, { useEffect, useState, useMemo } from 'react';
-import { useSession } from 'next-auth/react';
 
 // Import custom functionality
 import Numbers from '../utils/numbers';
+import useAppSession from '../utils/hooks/useAppSession';
 import { empty, titleCase } from '../utils/helpers';
 
 // Import components
@@ -24,7 +24,7 @@ export default function Home() {
   const [plays, setPlays] = useState([]);
   const [playDate, setPlayDate] = useState(null);
   const [playModalOpen, setPlayModalOpen] = useState(false);
-  const session = useSession();
+  const { session, plays: dbPlays, savePlays }= useAppSession();
   const { loading: lottoLoading, numbers: prevResults, cashValue, jackpot } = useLotto();
 
   const numbers = useMemo(() => {
@@ -78,6 +78,7 @@ export default function Home() {
         exclusions: !empty(exclusions) ? exclusions.map((name) => titleCase(name)).toString() : 'None'
       })
     }
+    savePlays(generatedPlays, nextDrawing);
     window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: generatedPlays, playDate: nextDrawing}))
     setPlays(generatedPlays);
     setPlayDate(nextDrawing);
