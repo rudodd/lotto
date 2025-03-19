@@ -11,7 +11,7 @@ Live app (designed for use on mobile): [lotto.rustindodd.com](https://lotto.rust
 - Ensures all plays fall in the "balanced" range with a sum totaling 130-221
 - Allows for the optional exclusion of both or either hot or cold numbers as determined by the last 100 draws
 - Highlights hot and cold numbers that have been generated
-- Saves generated plays in localStorage and checks for winners within generated plays after the draws has taken place for a given play
+- Allows users who sign in with Google to have generated plays saved for persistence
 
 ## Getting Started
 
@@ -21,6 +21,7 @@ It uses minimal additional npm packages, but those used are as follows:
 - [MUI (Material UI)](https://mui.com/material-ui/getting-started/) - Used for UI components / general styling
 - [SASS](https://www.npmjs.com/package/sass) - Used for SCSS integration
 - [Cheerio](https://www.npmjs.com/package/cheerio) - Used to parse the HTML from powerball.com to get next drawing data
+- [Axios](https://www.npmjs.com/package/axios) - Used for simplified fetch calls
 
 To run the development server:
 
