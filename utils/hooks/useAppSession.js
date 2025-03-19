@@ -20,12 +20,16 @@ export default function useAppSession() {
   }, [session])
 
   const savePlays = useCallback(async (numbers, date)=> {
-    axios.put('/api/user-data', {id: userId.current, numbers: numbers, drawingDate: date})
-      .then((res) => {
-        if (res.data.acknowledged) {
-          setPlays({numbers: numbers, drawingDate: date});
-        }
-      })
+    if (session.status === 'authenticated') {
+      axios.put('/api/user-data', {id: userId.current, numbers: numbers, drawingDate: date})
+        .then((res) => {
+          if (res.data.acknowledged) {
+            setPlays({numbers: numbers, drawingDate: date});
+          }
+        })
+    } else {
+      setPlays({numbers: numbers, drawingDate: date});
+    }
   }, [])
 
   useEffect(() => {

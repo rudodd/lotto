@@ -1,5 +1,5 @@
 // Import library functionality
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 // Import custom functionality
 import Numbers from '../utils/numbers';
@@ -19,13 +19,9 @@ import AppHead from '../components/AppHead';
 import useLotto from '../utils/hooks/useLotto';
 
 export default function Home() {
-
-  const [loading, setLoading] = useState(true);
-  const [plays, setPlays] = useState([]);
-  const [playDate, setPlayDate] = useState(null);
   const [playModalOpen, setPlayModalOpen] = useState(false);
-  const { session, plays: dbPlays, savePlays }= useAppSession();
-  const { loading: lottoLoading, numbers: prevResults, cashValue, jackpot } = useLotto();
+  const { session, plays, savePlays }= useAppSession();
+  const { loading, numbers: prevResults, cashValue, jackpot } = useLotto();
 
   const numbers = useMemo(() => {
     return !empty(prevResults) ? new Numbers(prevResults): null;
@@ -56,9 +52,7 @@ export default function Home() {
   }, [])
 
   // Use the Numbers class to generate plays based on inputs - called from PlayGeneratorModal component
-  const generatePlays = (patterns, exclusions) => {
-    setPlays([]);
-    setPlayDate(null);
+  const generatePlays = useCallback((patterns, exclusions) => {
     const includeRandom = patterns.includes('random');
     if (includeRandom) {
       patterns = patterns.filter((pattern) => pattern != 'random');
@@ -79,32 +73,7 @@ export default function Home() {
       })
     }
     savePlays(generatedPlays, nextDrawing);
-    window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: generatedPlays, playDate: nextDrawing}))
-    setPlays(generatedPlays);
-    setPlayDate(nextDrawing);
     setPlayModalOpen(false);
-  }
-
-  // Function to reuse the same pay from the last drawing for the next drawing
-  const replay = () => {
-    window.localStorage.setItem('power-picker-plays', JSON.stringify({plays: plays.plays, playDate: nextDrawing}))
-    setPlayDate(nextDrawing);
-  }
-
-  useEffect(() => {
-    if ( !empty(prevResults) && !empty(lastDrawing) ) {
-      setTimeout(() => {
-        setLoading(false); // Use setTimeout to avoid skeleton flashing
-      }, 500)
-    }
-  }, [prevResults, lastDrawing])
-
-  useEffect(() => {
-    const savedPlays = JSON.parse(window.localStorage.getItem('power-picker-plays'));
-    if (!empty(savedPlays)) {
-      setPlays(savedPlays.plays);
-      setPlayDate(savedPlays.playDate);
-    }
   }, [])
 
   return (
@@ -128,28 +97,28 @@ export default function Home() {
             <div className="my-numbers">
               <div className="my-numbers-title-block">
                 <h3>My Numbers</h3>
-                {!empty(plays) && (new Date(nextDrawing) > new Date(playDate)) &&
+                {session.status === 'authenticated' && !empty(plays.numbers) && (new Date(nextDrawing) > new Date(plays.drawingDate)) &&
                   <Button 
                     className="replay-button" 
                     variant="outlined" 
                     size="small" 
                     startIcon={<ReplayIcon />}
-                    onClick={() => replay()}
+                    onClick={() => savePlays(plays.numbers, nextDrawing)}
                   >
                     Play Again
                   </Button>
                 }
               </div>
-              {!empty(plays) ? (
+              {!empty(plays.numbers) ? (
                 <>
-                  <p>For the {playDate} drawing</p>
-                  {plays.map((play, key) => (
+                  <p>For the {plays.drawingDate} drawing</p>
+                  {plays.numbers.map((play, key) => (
                     <NumberCard 
                       play={play} 
                       hot={hot} 
                       cold={cold} 
                       key={`generated-play-${key}`} 
-                      winningNumbers={!empty(prevResults.filter((drawing) => drawing.date.toDateString() == playDate)) ? prevResults.filter((drawing) => drawing.date.toDateString() == playDate)[0].numbers : []} 
+                      winningNumbers={!empty(prevResults.filter((drawing) => drawing.date.toDateString() == plays.drawingDate)) ? prevResults.filter((drawing) => drawing.date.toDateString() == plays.drawingDate)[0].numbers : []} 
                     />
                   ))}
                   <Button className="generate-plays-button" variant="contained" onClick={() => setPlayModalOpen(true)}>Generate New Plays</Button>
